@@ -12,6 +12,18 @@ const markers = {};
 const userListElement = document.getElementById('user-list');
 const userData = {}; // To store the latest coords for each user
 
+// Chat Elements
+const chatContainer = document.getElementById('chat-container');
+const chatHeader = document.getElementById('chat-header');
+const toggleChatBtn = document.getElementById('toggle-chat');
+const chatBadge = document.getElementById('chat-badge');
+const chatMessages = document.getElementById('chat-messages');
+const chatForm = document.getElementById('chat-form');
+const chatInput = document.getElementById('chat-input');
+
+let unreadCount = 0;
+let isChatExpanded = false;
+
 if (navigator.geolocation) {
     navigator.geolocation.watchPosition(
         (position) => {
@@ -93,5 +105,52 @@ socket.on("user-disconnected", (id) => {
     if (userData[id]) {
         delete userData[id];
         updateUserListUI();
+    }
+});
+
+// Chat Logic
+chatHeader.addEventListener('click', () => {
+    isChatExpanded = !isChatExpanded;
+    chatContainer.classList.toggle('expanded', isChatExpanded);
+    chatContainer.classList.toggle('collapsed', !isChatExpanded);
+    toggleChatBtn.innerText = isChatExpanded ? '▼' : '▲';
+    
+    if (isChatExpanded) {
+        unreadCount = 0;
+        chatBadge.classList.add('hidden');
+        chatBadge.innerText = '0';
+        chatInput.focus();
+    }
+});
+
+chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = chatInput.value.trim();
+    if (message) {
+        socket.emit('chat-message', message);
+        chatInput.value = '';
+    }
+});
+
+socket.on('new-chat-message', (data) => {
+    const { id, username: sender, message } = data;
+    const isMe = id === socket.id;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    messageDiv.classList.add(isMe ? 'sent' : 'received');
+    
+    messageDiv.innerHTML = `
+        <span class="sender">${isMe ? 'You' : sender}</span>
+        <span class="text">${message}</span>
+    `;
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    if (!isChatExpanded && !isMe) {
+        unreadCount++;
+        chatBadge.innerText = unreadCount;
+        chatBadge.classList.remove('hidden');
     }
 });

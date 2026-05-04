@@ -84,6 +84,16 @@ io.on('connection', function (socket) {
         io.emit("receive-location", { id: socket.id, ...data });
     });
 
+    socket.on("chat-message", function (message) {
+        // Broadcast the message along with the sender's name
+        io.emit("new-chat-message", {
+            id: socket.id,
+            username: userLocations[socket.id] ? userLocations[socket.id].username : "Unknown",
+            message: message,
+            timestamp: new Date()
+        });
+    });
+
     socket.on("disconnect", function () {
         delete userLocations[socket.id];
         io.emit("user-disconnected", socket.id);
