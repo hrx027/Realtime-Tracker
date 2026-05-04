@@ -34,7 +34,9 @@ function updateUserListUI() {
     userListElement.innerHTML = '';
     Object.keys(userData).forEach(id => {
         const li = document.createElement('li');
-        li.innerHTML = `📍 <strong>${userData[id].username}</strong>`;
+        // Add "(You)" label for current user
+        const displayLabel = userData[id].username === username ? `${userData[id].username} (You)` : userData[id].username;
+        li.innerHTML = `📍 <strong>${displayLabel}</strong>`;
         li.onclick = () => {
             const { latitude, longitude } = userData[id];
             map.flyTo([latitude, longitude], 18);
@@ -46,7 +48,7 @@ function updateUserListUI() {
     });
 }
 
-socket.on("receive-location", (data) => {
+function handleReceiveLocation(data) {
     const { id, latitude, longitude, username: otherUser } = data;
     
     // Store user data for the list
@@ -70,6 +72,16 @@ socket.on("receive-location", (data) => {
             })
             .openPopup();
     }
+}
+
+socket.on("all-users", (allUsers) => {
+    Object.keys(allUsers).forEach(id => {
+        handleReceiveLocation(allUsers[id]);
+    });
+});
+
+socket.on("receive-location", (data) => {
+    handleReceiveLocation(data);
 });
 
 socket.on("user-disconnected", (id) => {

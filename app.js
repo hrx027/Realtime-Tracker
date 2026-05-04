@@ -71,12 +71,21 @@ app.get('/', isAuthenticated, (req, res) => {
     res.render("index", { user: req.user });
 });
 
+const userLocations = {}; // Store latest locations in memory
+
 io.on('connection', function (socket) {
+    // Send existing users to the new user immediately
+    socket.emit("all-users", userLocations);
+
     socket.on("send-location", function (data) {
+        // Store/Update this user's location
+        userLocations[socket.id] = { id: socket.id, ...data };
+        // Broadcast to everyone else
         io.emit("receive-location", { id: socket.id, ...data });
     });
 
     socket.on("disconnect", function () {
+        delete userLocations[socket.id];
         io.emit("user-disconnected", socket.id);
     });
 });
