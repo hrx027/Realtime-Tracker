@@ -33,10 +33,11 @@ if (navigator.geolocation) {
 function updateUserListUI() {
     userListElement.innerHTML = '';
     Object.keys(userData).forEach(id => {
+        // Only show other people in the list, skip the current user
+        if (userData[id].username === username) return;
+
         const li = document.createElement('li');
-        // Add "(You)" label for current user
-        const displayLabel = userData[id].username === username ? `${userData[id].username} (You)` : userData[id].username;
-        li.innerHTML = `📍 <strong>${displayLabel}</strong>`;
+        li.innerHTML = `📍 <strong>${userData[id].username}</strong>`;
         li.onclick = () => {
             const { latitude, longitude } = userData[id];
             map.flyTo([latitude, longitude], 18);
