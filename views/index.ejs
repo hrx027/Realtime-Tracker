@@ -10,6 +10,22 @@
     </head>
     <body> 
         <div id="map"></div>
+        
+        <!-- Top Left: Active Users List -->
+        <div id="active-users" style="position: absolute; top: 10px; left: 10px; z-index: 1000; background: rgba(255, 255, 255, 0.7); padding: 10px; border-radius: 8px; min-width: 150px; max-height: 40vh; overflow-y: auto; border: 1px solid rgba(0,0,0,0.1);">
+            <h4 style="margin: 0 0 8px 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px;">Active Users</h4>
+            <ul id="user-list" style="list-style: none; padding: 0; margin: 0;">
+                <!-- Users will be added here dynamically -->
+            </ul>
+        </div>
+
+        <!-- Top Right: Current User Info -->
+        <div id="user-info" style="position: absolute; top: 10px; right: 10px; z-index: 1000; background: rgba(255, 255, 255, 0.7); padding: 5px 10px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1);">
+            Logged in as: <strong><%= user.displayName %></strong> | <a href="/logout">Logout</a>
+        </div>
+        <script>
+            const USER_NAME = "<%= user.displayName %>";
+        </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script src="/js/script.js"></script>

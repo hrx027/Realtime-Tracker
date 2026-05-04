@@ -13,3 +13,30 @@ html, body {
     height: 100%;
     width:100%;
 }
+
+/* Custom styling for transparent map labels */
+.transparent-popup .leaflet-popup-content-wrapper {
+    background: transparent;
+    box-shadow: none;
+}
+
+.transparent-popup .leaflet-popup-tip {
+    background: transparent;
+    box-shadow: none;
+}
+
+#user-list li {
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    transition: background 0.2s;
+}
+
+#user-list li:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+#user-list li strong {
+    color: #007bff;
+}
