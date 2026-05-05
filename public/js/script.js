@@ -24,12 +24,17 @@ const chatInput = document.getElementById('chat-input');
 let unreadCount = 0;
 let isChatExpanded = false;
 
+let firstTime = true;
+
 if (navigator.geolocation) {
     navigator.geolocation.watchPosition(
         (position) => {
             const { latitude, longitude } = position.coords;
             socket.emit("send-location", { latitude, longitude, username });
-            map.setView([latitude, longitude], 16);
+            if (firstTime) {
+                map.setView([latitude, longitude], 16);
+                firstTime = false;
+            }
         },
         (error) => {
             console.error(error);
